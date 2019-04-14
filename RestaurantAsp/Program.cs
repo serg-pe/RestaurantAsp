@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,14 +22,16 @@ namespace RestaurantAsp
 
             using (var scope = host.Services.CreateScope())
             {
+                var services = scope.ServiceProvider;
                 try
                 {
-                    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                    DbInitializer.Initialize(context);
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+                    var passwordHasher = services.GetRequiredService <IPasswordHasher<IdentityUser>>();
+                    DbInitializer.Initialize(context, passwordHasher);
                 }
                 catch (Exception e)
                 {
-                    var logger = scope.ServiceProvider.GetRequiredService < ILogger<Program>>();
+                    var logger = services.GetRequiredService <ILogger<Program>>();
                     logger.LogError(e, "Error while initialize DB");
                 }
             }
