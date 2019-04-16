@@ -39,6 +39,7 @@ namespace RestaurantAsp
                 options.UseNpgsql(
                     Configuration.GetConnectionString("PostgreSQLConnection")));
             services.AddDefaultIdentity<IdentityUser>()
+                .AddRoles<IdentityRole>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 

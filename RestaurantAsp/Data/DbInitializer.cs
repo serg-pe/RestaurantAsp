@@ -1,7 +1,10 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using RestaurantAsp.Models;
 
 namespace RestaurantAsp.Data
@@ -9,46 +12,41 @@ namespace RestaurantAsp.Data
     public static class DbInitializer
     {
         public static void Initialize(
-            ApplicationDbContext context, 
-            IPasswordHasher<IdentityUser> passwordHasher)
+            ApplicationDbContext context,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
-            
+
             foreach (var roleName in RolesNames.GetAllRoles())
             {
-                if (!context.Roles.Any(role => role.Name == roleName))
-                    context.Roles.Add(new IdentityRole() {Name = roleName});
+                var roleResult = roleManager.FindByNameAsync(roleName).GetAwaiter().GetResult();
+                if (roleResult == null)
+                {
+                    roleManager.CreateAsync(new IdentityRole() {Name = roleName}).Wait();
+                }
 
                 context.SaveChanges();
             }
 
-            if (!context.Users.Any(user => user.UserName == "admin"))
+            const string adminName = "admin@admin.admin";
+            const string adminEmail = adminName;
+            const string adminPassword = "admin_ADMIN_97";
+            var adminResult = userManager.FindByNameAsync(adminName).GetAwaiter().GetResult();
+            if (adminResult == null)
             {
-                var admin = new IdentityUser()
-                {
-                    UserName = "admin@admin.admin",
-                    NormalizedUserName = "admin@admin.admin",
-                    Email = "admin@admin.admin",
-                    PasswordHash = "admin",
-                    NormalizedEmail = "ADMIN@ADMIN.ADMIN",
-                };
-                admin.PasswordHash = passwordHasher.HashPassword(admin, "admin");
-                context.Users.Add(admin);
+                var admin = new IdentityUser() {UserName = adminName, Email = adminEmail, SecurityStamp = new Guid().ToString()};
+                var h = userManager.CreateAsync(admin, adminPassword).GetAwaiter().GetResult().Errors;
 
                 context.SaveChanges();
-
-                var adminRoleId = context.Roles.First(role => role.Name == Roles.Admin.GetRoleName()).Id;
-                var adminId = context.Users.First(user => user.UserName == "admin").Id;
-                context.UserRoles.Add(new IdentityUserRole<string>()
-                {
-                    RoleId = adminRoleId, 
-                    UserId = adminId
-                });
-                context.SaveChanges();
-
+                
+                admin = userManager.FindByNameAsync(adminName).GetAwaiter().GetResult();
+                userManager.AddToRoleAsync(admin, Roles.Admin.GetRoleName()).Wait();
             }
 
         }
 
     }
+
 }

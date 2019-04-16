@@ -25,9 +25,12 @@ namespace RestaurantAsp
                 var services = scope.ServiceProvider;
                 try
                 {
+//                    var context = services.GetRequiredService<ApplicationDbContext>();
+//                    var passwordHasher = services.GetRequiredService<IPasswordHasher<IdentityUser>>();
                     var context = services.GetRequiredService<ApplicationDbContext>();
-                    var passwordHasher = services.GetRequiredService <IPasswordHasher<IdentityUser>>();
-                    DbInitializer.Initialize(context, passwordHasher);
+                    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    DbInitializer.Initialize(context, userManager, roleManager);
                 }
                 catch (Exception e)
                 {
