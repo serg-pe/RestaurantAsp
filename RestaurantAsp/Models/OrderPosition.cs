@@ -10,7 +10,7 @@ namespace RestaurantAsp.Models
         [ForeignKey("OrderId")]
         public Order Order { get; set; }
         [ForeignKey("CustomerId")]
-        public CustomerInfo Customer { get; set; }
+        public Dish Dish { get; set; }
         public int Portions { get; set; }
 
         public OrderPosition()

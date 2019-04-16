@@ -11,8 +11,8 @@ namespace RestaurantAsp.Models
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public bool IsActive { get; set; }
-//        public ICollection<OrderPosition> OrderPositions { get; set; }
-//        public CustomerInfo Customer { get; set; }
+        public ICollection<OrderPosition> OrderPositions { get; set; }
+        public CustomerInfo Customer { get; set; }
 
         public Order()
         {
