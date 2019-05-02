@@ -32,7 +32,7 @@ namespace RestaurantAsp.Data
 
             const string adminName = "admin@admin.admin";
             const string adminEmail = adminName;
-            const string adminPassword = "admin_ADMIN_97";
+            const string adminPassword = "a";
             var adminResult = userManager.FindByNameAsync(adminName).GetAwaiter().GetResult();
             if (adminResult == null)
             {

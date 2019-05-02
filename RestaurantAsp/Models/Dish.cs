@@ -22,7 +22,7 @@ namespace RestaurantAsp.Models
         [Column(TypeName = "DECIMAL(10, 3)")]
         public decimal Quantity { get; set; }
         
-        public ICollection<DishIngredient> Composition { get; set; } 
+        public IList<DishIngredient> Composition { get; set; } 
 
         public Dish()
         {

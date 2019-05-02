@@ -7,11 +7,10 @@ namespace RestaurantAsp.Models
     public class Ingredient
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IngredientId { get; set; }
+        public int Id { get; set; }
         [MaxLength(50)]
         public string Denomination { get; set; }
-        
-        public ICollection<DishIngredient> Composition { get; set; }
+        public IList<DishIngredient> CompositionItem { get; set; }
 
         public Ingredient()
         {

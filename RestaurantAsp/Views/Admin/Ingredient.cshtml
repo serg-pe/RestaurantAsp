@@ -1,0 +1,55 @@
+@model Ingredient
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+@Html.AntiForgeryToken()
+
+
+<h2>Создание ингредиента</h2>
+
+<form id="ingredient" asp-controller="Admin" asp-action="SaveIngredient" method="post">
+    <label for="denomination">Наименование</label>
+    @if (Model == null)
+    {
+        <input name="denomination" id="denomination" type="text"/>
+        <input name="id" id="id" type="hidden" value="0">
+        <input id="input" type="submit" value="Создать">
+    }
+    else
+    {
+        <input name="denomination" id="denomination" type="text" value="@Model.Denomination"/>
+        <input name="id" id="id" type="hidden" value="@Model.Id">
+        <input id="input" type="submit" value="Изменить">
+    }
+
+</form>
+
+@section Scripts
+{
+    <script src="~/js/ajax.js"></script>
+    <script>
+        $(document).ready(function() {
+            
+            $("form").submit(function(event) {
+                event.preventDefault();
+                
+                send_ajax(
+                    $(this).attr("method"),
+                    $(this).attr("action"),
+                    JSON.stringify({
+                        id: $('#id').val(),
+                        denomination: $('#denomination').val()
+                    }),
+                    function(response) {
+                        alert(response.message);
+                    },
+                    function(error) {
+                        alert(error);
+                    });
+            });
+        });
+    </script>
+}

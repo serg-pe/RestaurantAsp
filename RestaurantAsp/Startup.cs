@@ -43,7 +43,23 @@ namespace RestaurantAsp
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
+//            TODO Reconfigure IdentityOptions and Admin in DbInitializer before release.
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 1;
+
+                options.User.RequireUniqueEmail = true;
+                
+            });
+
+                
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,7 +77,7 @@ namespace RestaurantAsp
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+//            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 

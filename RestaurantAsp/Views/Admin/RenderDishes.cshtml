@@ -1,0 +1,96 @@
+@model Dictionary<Dish, IList<Ingredient>>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Блюда</h2>
+
+<div><a id="create" asp-controller="Admin" asp-action="CreateDish">Добавить</a></div>
+
+<table id="dishes" class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Номер блюда</th>
+        <th scope="col">Наименование</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Единица</th>
+        <th scope="col">Количество</th>
+        <th scope="col">Состав</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+    @foreach (var (dish, ingredients) in Model)
+    {
+        <tr id="row_@dish.Id">
+            
+            <td>
+                @dish.Id;
+            </td>
+            <td>
+                @dish.Denomination;
+            </td>
+            <td>
+                @dish.Price
+            </td>
+            <td>
+                @dish.Unit
+            </td>
+            <td>
+                @dish.Quantity
+            </td>
+            <td>
+                <ul>
+                    @foreach (var ingredient in ingredients)
+                    {
+                        <li>
+                            @ingredient.Denomination
+                        </li>
+                    }
+                </ul>
+            </td>
+            <td>
+                <a href="/admin/dishes/change/@dish.Id">Изменить</a>
+                <a href="/admin/dishes/delete/@dish.Id">Удалить</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script src="~/js/ajax.js"></script>
+    <script>
+        $(document).ready(function() {
+            
+            $("a").click(function(event) {
+                if ($(this).parents('#dishes').length == 1) {
+                    var link = $(this).attr("href").split('/')
+                    var id = link.pop();
+                    var action = link.pop();
+
+                    if (action === 'delete') {
+                        event.preventDefault();
+                    
+                        console.log($(this).closest('#dishes').has());
+                    
+                        send_ajax(
+                            $(this).attr("get"),
+                            $(this).attr("href"),
+                            null,
+                            function(response) {
+                                alert(response.message);
+                                $('#row_' + id).remove();
+                            },
+                            function(error) {
+                                alert(error);
+                            });
+                    }
+                }
+            });
+        });
+    </script>
+}

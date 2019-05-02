@@ -30,7 +30,9 @@ namespace RestaurantAsp
                     var context = services.GetRequiredService<ApplicationDbContext>();
                     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                    DbInitializer.Initialize(context, userManager, roleManager);
+                    
+//                    TODO Uncomment to initialize database
+//                    DbInitializer.Initialize(context, userManager, roleManager);
                 }
                 catch (Exception e)
                 {

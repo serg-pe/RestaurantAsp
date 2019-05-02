@@ -1,0 +1,92 @@
+@model RestaurantAsp.Views.Admin.Data.DishData
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+@Html.AntiForgeryToken()
+
+
+<h2>Создание блюда</h2>
+
+<form id="dish" asp-controller="Admin" asp-action="SaveDish" method="post">
+    <div>
+        <label for="denomination">Наименование</label><input name="denomination" id="denomination" type="text" value="@Model.Dish.Denomination"/>
+    </div>
+    <div>
+        <label for="price">Цена</label><input name="price" id="price" type="number" step="0.01" value="@Model.Dish.Price"/>
+    </div>
+    <div>
+        <div class="input-group-prepend">
+            <label class="input-group-text" for="unit">Единица</label>
+        
+            <select class="custom-select" id="unit">
+                <option selected="selected">
+                    @Model.Dish.Unit
+                </option>
+                @foreach (var unit in UnitsNames.GetAllUnits())
+                {
+                    <option>
+                        @unit
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+    <div>
+        <label for="quantity"/>
+        <input id="quantity" name="quantity" type="number" step="0.001" value="@Model.Dish.Quantity">
+    </div>
+    <div>
+        <label for="composition">Состав</label>
+        <select name="composition" id="composition" multiple="multiple">
+            @foreach (var ingredient in Model.Ingredients)
+            {
+                <option value="@ingredient.Id">@ingredient.Denomination</option>
+            }
+        </select>
+    </div>
+    <input id="id" name="id" type="hidden" value="@Model.Dish.Id"/>
+
+    @if (@Model.Dish.Id == 0)
+    {
+        <input id="input" type="submit" value="Создать">
+    }
+    else
+    {
+        <input id="input" type="submit" value="Изменить">
+    }
+    
+</form>
+
+@section Scripts
+{
+    <script src="~/js/ajax.js"></script>
+    <script>
+        $(document).ready(function() {
+            
+            $("form").submit(function(event) {
+                event.preventDefault();
+                
+                send_ajax(
+                    $(this).attr("method"),
+                    $(this).attr("action"),
+                    JSON.stringify({
+                        id: $('#id').val(),
+                        denomination: $('#denomination').val(),
+                        price: $('#price').val(),
+                        unit: $('#unit').val(),
+                        quantity: $('#quantity').val(),
+                        composition: ($('#composition').val())
+                    }),
+                    function(response) {
+                        alert(response.message);
+                    },
+                    function(error) {
+                        alert(error);
+                    });
+            });
+        });
+    </script>
+}

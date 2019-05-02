@@ -34,9 +34,10 @@ namespace RestaurantAsp.Models
             return unitName;
         }
 
-        public static HashSet<string> GetAllRoles()
+        public static IList<string> GetAllUnits()
         {
-            var units = new HashSet<string>();
+            var units = new List<string>();
+            
             foreach (var role in Units.Values)
                 units.Add(role);
             

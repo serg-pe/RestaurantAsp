@@ -1,0 +1,74 @@
+@using RestaurantAsp.Controllers
+@model System.Collections.Generic.List<RestaurantAsp.Models.Ingredient>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Ингредиенты</h2>
+<div><a asp-controller="Admin" asp-action="CreateIngredient">Добавить</a></div>
+
+<table id="ingredients" class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Номер ингредиента</th>
+        <th scope="col">Наименование</th>
+        <th scope="col">Действие</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+    @foreach (var ingredient in Model)
+    {
+        <tr id="row_@ingredient.Id">
+            <td>
+                @ingredient.Id
+            </td>
+            <td>
+                @ingredient.Denomination;
+            </td>
+            <td>
+                <a href="/admin/ingredients/change/@ingredient.Id">Изменить</a>
+                <a href="/admin/ingredients/delete/@ingredient.Id">Удалить</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+
+@section Scripts
+{
+    <script src="~/js/ajax.js"></script>
+    <script>
+        $(document).ready(function() {
+            
+            $("a").click(function(event) {
+                if ($(this).parents('#ingredients').length == 1) {
+                    var link = $(this).attr("href").split('/')
+                    var id = link.pop();
+                    var action = link.pop();
+
+                    if (action === 'delete') {
+                        event.preventDefault();
+                    
+                        console.log($(this).closest('#dishes').has());
+                    
+                        send_ajax(
+                            $(this).attr("get"),
+                            $(this).attr("href"),
+                            null,
+                            function(response) {
+                                alert(response.message);
+                                $('#row_' + id).remove();
+                            },
+                            function(error) {
+                                alert(error);
+                            });
+                    }
+                }
+            });
+        });
+    </script>
+}
