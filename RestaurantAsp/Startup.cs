@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -57,6 +58,15 @@ namespace RestaurantAsp
                 
             });
 
+//          Sessions activation
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(1);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
                 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
@@ -83,6 +93,9 @@ namespace RestaurantAsp
 
             app.UseAuthentication();
 
+//          Sessions activation
+            app.UseSession();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

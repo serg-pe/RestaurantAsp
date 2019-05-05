@@ -1,0 +1,160 @@
+@model IDictionary<Dish, int>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+@Html.AntiForgeryToken()
+
+<h2>Заказ</h2>
+
+<div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Наименование</th>
+            <th>Количество порций</th>
+            <th>Цена</th>
+            <th>Стоимость</th>
+            <th></th>
+        </tr>
+        </thead>
+        
+        <tbody id="positions">
+        @{ var sum = decimal.Zero; }
+        @if (Model.Any())
+        {
+            foreach (var (dish, portions) in Model)
+            {
+                var cost = dish.Price * portions;
+                <tr id="position_@dish.Id">
+                    <td>@dish.Denomination</td>
+                    <td>@portions</td>
+                    <td>@dish.Price</td>
+                    <td>@(dish.Price * portions)</td>
+                    <td><button class="btn btn-link" data-id="@dish.Id" data-sumfor="@(dish.Price * portions)">Убрать</button></td>
+                </tr>
+                sum += cost;
+            }
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="sum" class="font-weight-bold" data-sum="@sum">Всего: @sum</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    
+    @if (Model.Any())
+    {
+        <div id="open-confirm" class="text-center">
+            <button type="button" class="btn btn-light btn-add btn-hov" data-toggle="modal" data-target="#confirmation">Оформить заказ</button>
+        </div>
+        
+        <div class="modal fade" id="confirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <form method="post" asp-controller="Home" asp-action="ConfirmOrder">
+                        <input id="id" name="id" type="hidden" value="0"/>
+                        <div class="modal-header">
+                            <h3 class="modal-title">Подтверждение заказа</h3>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><label for="phoneNumber">Номер телефона</label></td>
+                                        <td><input id="phoneNumber" name="phoneNumber" class="form-control w-auto"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="address">Адрес</label></td>
+                                        <td><input id="address" name="address" class="form-control w-auto" type="tel" maxlength="255"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer d-block">
+                            <div class="text-center">
+                                <button id="confirm" type="submit" class="btn btn-add btn-hov btn-primary">Оформить</button>
+                                <button type="button" class="btn btn-light btn-composition btn-hov" data-dismiss="modal">Закрыть</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+    
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@3.3.7/dist/inputmask/inputmask.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@3.3.7/dist/inputmask/inputmask.extensions.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@3.3.7/dist/inputmask/inputmask.numeric.extensions.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@3.3.7/dist/inputmask/inputmask.date.extensions.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@3.3.7/dist/inputmask/inputmask.phone.extensions.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@3.3.7/dist/inputmask/jquery.inputmask.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@3.3.7/dist/inputmask/phone-codes/phone.js"></script>
+    <script src="js/ajax.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#phoneNumber').inputmask({ alias: "phone", "clearIncomplete": true });
+
+            $('form').submit(function(event) {
+                event.preventDefault();
+                var formJson = {};
+                $.map($(this).serializeArray(), function(n, i) {
+                    formJson[n['name']] = n['value'];
+                });
+                var phone = formJson.phoneNumber;
+                formJson.phoneNumber = "";
+                for (var i = 0, len = phone.length; i < len; i++) {
+                    if (!isNaN(parseInt(phone[i])))
+                        formJson.phoneNumber += phone[i];
+                }
+
+                send_ajax(
+                    $(this).attr('method'),
+                    $(this).attr('action'),
+                    JSON.stringify(formJson),
+                    function(response) {
+                        alert(response.message);
+                    },
+                    function() {
+                        alert("При оформлении заказа произошла ошибка");
+                    });
+            });
+
+            $('button').click(function() {
+                var btn = $(this);
+                if (btn.attr('data-id') !== undefined) {
+                    send_ajax(
+                        'get',
+                        'order/delete/' + btn.attr('data-id'),
+                        '',
+                        function() {
+                            var sum = parseFloat($('#sum').attr('data-sum')) - parseFloat(btn.attr('data-sumfor'));
+                            $('#sum').text(sum);
+                            $('#sum').attr('data-sum', sum);
+                            $('#position_' + btn.attr('data-id')).remove();
+                            if (sum === 0 || sum === 0.00) {
+                                $('#positions').remove();
+                                $('#open-confirm').remove();
+                                $('.modal').remove();
+                            }
+                        },
+                        function() {
+                            alert('Операция не выполнена');
+                        });
+                }
+            });
+        })
+    </script>
+}

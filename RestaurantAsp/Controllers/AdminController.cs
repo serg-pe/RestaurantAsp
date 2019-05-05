@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -189,6 +190,28 @@ namespace RestaurantAsp.Controllers
             _context.Dishes.Remove(dish);
             _context.SaveChanges();
             return new JsonResult(new {message = "Объект успешно удалён"});
+        }
+
+        [Route("orders/")]
+        public IActionResult RenderOrders()
+        {
+            var orders = _context.Orders
+                .Include(order => order.Customer)
+                .Include(order => order.OrderPositions)
+                .ThenInclude(position => position.Dish)
+                .OrderByDescending(o => o.IsActive)
+                .ToList();
+
+            return View(orders);
+        }
+
+        [Route("orders/done/{id:int}")]
+        public IActionResult SetOrderDone(int id)
+        {
+            _context.Orders.Find(id).IsActive = false;
+            _context.SaveChanges();
+            
+            return new JsonResult(new {message = "Выполнено"});
         }
     }
 }

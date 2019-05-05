@@ -1,0 +1,76 @@
+@model IList<Order>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "Admin/_Layout";
+}
+
+<div>
+    <h2>Заказы</h2>
+    <input type="hidden"/>
+    <div>
+        <table class="table table-striped">
+            <thead class="font-weight-bold">
+            <tr>
+                <td>Активность</td>
+                <td>Дата заказа</td>
+                <td>Телефон</td>
+                <td>Адрес</td>
+                <td>Блюда</td>
+                <td></td>
+            </tr>
+            </thead>
+            
+            <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td id="activity_@order.Id">@order.IsActive</td>
+                    <td>@order.Date</td>
+                    <td>@order.Customer.PhoneNumber</td>
+                    <td>@order.Customer.Address</td>
+                    <td>
+                        <ul>
+                            @foreach (var position in order.OrderPositions)
+                            {
+                                <li>@position.Dish.Denomination: @position.Portions</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        @if (order.IsActive)
+                        {
+                            <button class="btn btn-link" type="button" data-id="@order.Id">Готов</button>   
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/js/ajax.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("button").click(function() {
+                var btn = $(this);
+                console.log(btn.attr('data-id'));
+                send_ajax(
+                    'get',
+                    '/admin/orders/done/' + btn.attr('data-id'),
+                    '',
+                    function(response) {
+                        $('#activity_' + btn.attr('data-id')).text("False");
+                        btn.remove();
+                    },
+                    function() {
+                        alert("Операция не выполнена");
+                    });
+            });
+        })
+    </script>
+}
+

@@ -54,3 +54,22 @@ body {
   height: 60px;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.btn-add {
+  background: #452100;
+  color: white;
+}
+
+.btn-hov:hover {
+  background: white;
+  color: black;
+  font-weight: bold;
+  transition-duration: 0.35s;
+}
+
+.btn-composition {
+    background: #00370f;
+    color: white;
+    transition-duration: 0.35s;
+}
+

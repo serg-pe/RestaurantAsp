@@ -10,7 +10,6 @@ namespace RestaurantAsp.Models
         public int Id { get; set; }
         [MaxLength(50)]
         public string Denomination { get; set; }
-        public IList<DishIngredient> CompositionItem { get; set; }
 
         public Ingredient()
         {
