@@ -30,37 +30,38 @@ namespace RestaurantAsp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+//        public IActionResult Privacy()
+//        {
+//            return View();
+//        }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
-        }
+//        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+//        public IActionResult Error()
+//        {
+//            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+//        }
 
         [Route("menu/")]
-        public IActionResult RenderMenu(int page=1)
+        public IActionResult RenderMenu()
         {
             var dishes = _context.Dishes
                 .Include(dish => dish.Composition)
-                .ThenInclude(composition => composition.Ingredient);
-
-            var count = dishes.Count();
-            var items = dishes.Skip((page - 1) * DishesPerPage)
-                .Take(DishesPerPage)
+                .ThenInclude(composition => composition.Ingredient)
                 .ToList();
+
+//            var count = dishes.Count();
+//            var items = dishes.Skip((page - 1) * DishesPerPage)
+//                .Take(DishesPerPage)
+//                .ToList();
+//            
+//            var pagination = new PaginationViewModel(count, page, DishesPerPage);
+//            var menuPage = new MenuViewModel
+//            {
+//                Dishes = items,
+//                Pagination = pagination
+//            };
             
-            var pagination = new PaginationViewModel(count, page, DishesPerPage);
-            var menuPage = new MenuViewModel
-            {
-                Dishes = items,
-                Pagination = pagination
-            };
-            
-            return View("Menu", menuPage);
+            return View("Menu", dishes);
         }
 
         [HttpPost]

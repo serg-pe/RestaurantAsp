@@ -3,6 +3,12 @@
 @{
     ViewBag.Title = "title";
     Layout = "Admin/_Layout";
+    
+    var dishIngredients = new HashSet<Ingredient>();
+    foreach (var item in Model.Dish.Composition)
+    {
+        dishIngredients.Add(item.Ingredient);
+    }
 }
 
 @Html.AntiForgeryToken()
@@ -43,7 +49,15 @@
         <select name="composition" id="composition" multiple="multiple">
             @foreach (var ingredient in Model.Ingredients)
             {
-                <option value="@ingredient.Id">@ingredient.Denomination</option>
+                if (dishIngredients.Contains(ingredient))
+                {
+                    <option value="@ingredient.Id" selected="">@ingredient.Denomination</option>
+                }
+                else
+                {
+                    <option value="@ingredient.Id">@ingredient.Denomination</option>
+                }
+                
             }
         </select>
     </div>

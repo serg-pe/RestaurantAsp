@@ -137,7 +137,10 @@ namespace RestaurantAsp.Controllers
         [Authorize(Roles = "ADMIN")]
         public IActionResult ChangeDish(int id)
         {
-            var dish = _context.Dishes.Find(id);
+            var dish = _context.Dishes
+                .Include(d => d.Composition)
+                .ThenInclude(di => di.Ingredient)
+                .First(d => d.Id == id);
             
             var dishData = new DishData
             {
@@ -173,7 +176,11 @@ namespace RestaurantAsp.Controllers
 
             if (dish.Id != 0)
             {
-                var targetDish = _context.Dishes.Find(dish.Id);
+                var targetDish = _context.Dishes
+                    .Include(d => d.Composition)
+                    .ThenInclude(di => di.Ingredient)
+                    .First(d => d.Id == dish.Id);
+                targetDish.Composition.Clear();
                 targetDish.Denomination = dish.Denomination;
                 targetDish.Unit = dish.Unit;
                 targetDish.Composition = dish.Composition;

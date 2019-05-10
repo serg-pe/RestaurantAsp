@@ -1,4 +1,4 @@
-@model MenuViewModel
+@model IList<Dish>
 
 @{
     ViewBag.Title = "title";
@@ -11,7 +11,7 @@
     <h1>Меню</h1>
     <div id="menu" class="row">
         
-        @foreach (var dish in Model.Dishes) 
+        @foreach (var dish in Model) 
         {
             <div class="col-sm-6 col-md-4 col-xl-3 p-2">
                 <form class="card" method="post" asp-controller="Home" asp-action="AddToSession">
