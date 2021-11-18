@@ -1,5 +1,3 @@
-using System;
-
 namespace RestaurantAsp.Models
 {
     public class ErrorViewModel

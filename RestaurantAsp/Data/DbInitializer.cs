@@ -1,11 +1,6 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using RestaurantAsp.Models;
+using System;
 
 namespace RestaurantAsp.Data
 {

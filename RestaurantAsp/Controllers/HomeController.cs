@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestaurantAsp.Data;
 using RestaurantAsp.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RestaurantAsp.Controllers
 {
@@ -24,6 +20,7 @@ namespace RestaurantAsp.Controllers
             this._context = dbContext;
         }
         
+        [HttpGet]
         [Route("home/"), Route("/")]
         public IActionResult Index()
         {

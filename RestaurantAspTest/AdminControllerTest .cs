@@ -1,28 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Session;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Options;
-using Moq;
-using MockQueryable.Moq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RestaurantAsp;
 using RestaurantAsp.Controllers;
 using RestaurantAsp.Data;
 using RestaurantAsp.Models;
 using RestaurantAsp.Views.Admin.Data;
-using RestaurantAspTest.Custom;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace RestaurantAspTest
@@ -159,12 +143,6 @@ namespace RestaurantAspTest
             Assert.NotNull(viewResult); 
         }
         
-        
-        
-        
-        
-        
-        
         [Fact]
         public void TestRenderDishes()
         {
@@ -189,6 +167,8 @@ namespace RestaurantAspTest
 
             var result = controller.CreateDish() as ViewResult;
             var viewResult = Assert.IsType<ViewResult>(result);
+
+            context.Rem
             
             Assert.NotNull(viewResult); 
             Assert.NotNull(viewResult.Model);

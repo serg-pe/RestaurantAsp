@@ -1,17 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestaurantAsp.Data;
 using RestaurantAsp.Models;
 using RestaurantAsp.Views.Admin.Data;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RestaurantAsp.Controllers
 {
@@ -27,14 +23,14 @@ namespace RestaurantAsp.Controllers
 
         [Route("")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult Index()
+        public ActionResult Index()
         {
             return View();
         }
 
         [Route("ingredients/")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult RenderIngredients()
+        public ActionResult RenderIngredients()
         {
             var ingredients = _context.Ingredients.ToList();
             return View(ingredients);
@@ -42,14 +38,14 @@ namespace RestaurantAsp.Controllers
 
         [Route("ingredients/create/")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult CreateIngredient()
+        public ActionResult CreateIngredient()
         {
             return View("Ingredient", null);
         }
 
         [Route("ingredients/change/{id:int}")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult ChangeIngredient(int id)
+        public ActionResult ChangeIngredient(int id)
         {
             var ingredient = _context.Ingredients.Find(id);
             return View("Ingredient", ingredient);
@@ -58,7 +54,7 @@ namespace RestaurantAsp.Controllers
         [HttpPost]
         [Route("ingredients/save/")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult SaveIngredient([FromBody]Ingredient ingredient)
+        public ActionResult SaveIngredient([FromBody]Ingredient ingredient)
         {
             if (ingredient.Id != 0)
             {
@@ -82,7 +78,7 @@ namespace RestaurantAsp.Controllers
         
         [Route("ingredients/delete/{id:int}")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult DeleteIngredient(int id)
+        public ActionResult DeleteIngredient(int id)
         {
             var ingredient = _context.Ingredients.Find(id);
             _context.Ingredients.Remove(ingredient);
@@ -92,7 +88,7 @@ namespace RestaurantAsp.Controllers
 
         [Route("dishes/")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult RenderDishes()
+        public ActionResult RenderDishes()
         {
             var dishesCompositions = new Dictionary<Dish, IList<Ingredient>>();
             var dishes = _context.Dishes.ToList();
@@ -112,7 +108,7 @@ namespace RestaurantAsp.Controllers
         
         [Route("dishes/create/")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult CreateDish()
+        public ActionResult CreateDish()
         {
             var dish = new Dish()
             {
@@ -135,7 +131,7 @@ namespace RestaurantAsp.Controllers
 
         [Route("dishes/change/{id:int}")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult ChangeDish(int id)
+        public ActionResult ChangeDish(int id)
         {
             var dish = _context.Dishes
                 .Include(d => d.Composition)
@@ -154,7 +150,7 @@ namespace RestaurantAsp.Controllers
         [HttpPost]
         [Route("dishes/save/")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult SaveDish([FromBody]JObject jDish)
+        public ActionResult SaveDish([FromBody]JObject jDish)
         {
             var dish = new Dish();
             
@@ -203,7 +199,7 @@ namespace RestaurantAsp.Controllers
 
         [Route("dishes/delete/{id:int}")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult DeleteDish(int id)
+        public ActionResult DeleteDish(int id)
         {
             var dish = _context.Dishes.Find(id);
             _context.Dishes.Remove(dish);
@@ -213,7 +209,7 @@ namespace RestaurantAsp.Controllers
 
         [Route("orders/")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult RenderOrders()
+        public ActionResult RenderOrders()
         {
             var orders = _context.Orders
                 .Include(order => order.Customer)
@@ -227,7 +223,7 @@ namespace RestaurantAsp.Controllers
 
         [Route("orders/done/{id:int}")]
         [Authorize(Roles = "ADMIN")]
-        public IActionResult SetOrderDone(int id)
+        public ActionResult SetOrderDone(int id)
         {
             _context.Orders.Find(id).IsActive = false;
             _context.SaveChanges();
